@@ -7,7 +7,7 @@ class SessionsController < ApplicationController
     if user && user.authenticate(params[:session][:password])
       log_in user
       params[:session][:remember_me] == '1' ? remember(user) : forget(user)
-      redirect_to user
+      redirect_back_or user #This handles instances where the user needs "friendly forwarding" to the intended page. The user show page is a default if we're not looking to be forwarded to another intended page.
     else
      flash.now[:danger] = 'Invalid email/password combination'
      render 'new'
