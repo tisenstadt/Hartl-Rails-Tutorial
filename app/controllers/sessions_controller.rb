@@ -5,14 +5,23 @@ class SessionsController < ApplicationController
   def create
     user = User.find_by(email: params[:session][:email].downcase)
     if user && user.authenticate(params[:session][:password])
-      log_in user
-      params[:session][:remember_me] == '1' ? remember(user) : forget(user)
-      redirect_back_or user #This handles instances where the user needs "friendly forwarding" to the intended page. The user show page is a default if we're not looking to be forwarded to another intended page.
+      if user.activated?
+        log_in user
+        params[:session][:remember_me] == '1' ? remember(user) : forget(user)
+        redirect_back_or user #Friendly forwarding
+      else
+        message = "Account not activated. "
+        message += "Check your email for the activation link."
+        flash[:warning] = message
+        redirect_to root_url
+      end
     else
-     flash.now[:danger] = 'Invalid email/password combination'
-     render 'new'
+      flash.now[:danger] = "Invalid email/password combination" #No redirect, flash would appear twice without flash.now
+      render 'new'
     end
   end
+        
+  
   
   def destroy
     log_out if logged_in?
