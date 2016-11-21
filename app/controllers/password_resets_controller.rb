@@ -51,7 +51,7 @@ class PasswordResetsController < ApplicationController
     end
     
     def valid_user
-      redirect_to root_url unless (@user && @user.activated? && @user.authenticated?(:reset, params[:id])) #Again, initially pulled from the parameters submitted via email.
+      redirect_to root_url unless (@user && @user.activated? && @user.authenticated?(:reset, params[:id])) #Again, this token is initially pulled from the parameters submitted via email.
     end
     
     def check_expiration
